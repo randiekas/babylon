@@ -1,0 +1,108 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- import #zmmtg-root css -->
+    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.3.0/css/bootstrap.css" />
+    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.3.0/css/react-select.css" />
+<head>
+<body>
+<!-- added on import -->
+<div id="zmmtg-root"></div>
+<div id="aria-notify-area"></div>
+<!-- added on meeting init -->
+<div class="ReactModalPortal"></div>
+<div class="ReactModalPortal"></div>
+<div class="ReactModalPortal"></div>
+<div class="ReactModalPortal"></div>
+<div class="global-pop-up-box"></div>
+<div class="sharer-controlbar-container sharer-controlbar-container--hidden"></div>
+
+<!-- import ZoomMtg dependencies -->
+<script src="https://source.zoom.us/2.3.0/lib/vendor/react.min.js"></script>
+<script src="https://source.zoom.us/2.3.0/lib/vendor/react-dom.min.js"></script>
+<script src="https://source.zoom.us/2.3.0/lib/vendor/redux.min.js"></script>
+<script src="https://source.zoom.us/2.3.0/lib/vendor/redux-thunk.min.js"></script>
+<script src="https://source.zoom.us/2.3.0/lib/vendor/lodash.min.js"></script>
+
+<!-- import ZoomMtg -->
+<script src="https://source.zoom.us/zoom-meeting-2.3.0.min.js"></script>
+
+<!-- import local .js file -->
+<script type="text/javascript">
+ZoomMtg.setZoomJSLib('https://source.zoom.us/2.3.0/lib', '/av'); 
+ZoomMtg.preLoadWasm();
+ZoomMtg.prepareJssdk();
+
+let params = new URLSearchParams(window.location.search);
+
+const zoomMeeting   = document.getElementById("zmmtg-root")
+const meetingNumber = params.get("meetingNumber") || "3904287435"
+const userName      = localStorage.getItem("username")||'randiekas'
+const apiKey        = "Q5Ptj4bqSjmuWV3eYtXgXw"
+const userEmail     = ""
+const password      = params.get("password") || "vmt7nt"
+const leaveUrl      = window.location.href
+const signature     = "UTVQdGo0YnFTam11V1YzZVl0WGdYdy44NjkyODQ4Mzg2Ni4xNjI3Mjc5ODMwMzU2LjAuTk1wRk03aWdzOWZuamQ0UjNiME9aR2p2TnFSZnNrOXFhM0NnMjQyOFZQND0="
+
+
+fetch(`https://app-sangsang.sobatteknologi.com/api/zoom?meeting_number=${meetingNumber}&role=0`, {
+			method: 'GET'
+		})
+		.then(result => result.text())
+		.then(response => {
+            response    = JSON.parse(response)
+            ZoomMtg.init({
+                leaveUrl: leaveUrl,
+                showMeetingHeader: false,
+                isSupportAV: true,
+                isSupportChat: false,
+                success: (success) => {
+                    ZoomMtg.join({
+                        meetingNumber: meetingNumber,
+                        userName: userName,
+                        signature: response.data.token,
+                        apiKey: apiKey,
+                        userEmail: userEmail,
+                        passWord: password,
+                        success: (success) => {
+                            console.log(success);
+                        },
+                        error: (error) => {
+                            console.log(error);
+                        }
+                    });
+                },
+                error: (error) => {
+                    console.log(error);
+                }
+            });
+            
+            ZoomMtg.inMeetingServiceListener('onUserJoin', function (data) {
+                console.log(data)
+            });
+
+            ZoomMtg.inMeetingServiceListener('onUserLeave', function (data) {
+            });
+
+	})
+</script>
+<style>
+    .meeting-title{
+        display: none;
+    }
+    .join-dialog{
+        width: -webkit-fill-available!important;
+    }
+    #wc-container-right{
+        width: -webkit-fill-available!important;
+    }
+    .zmu-paper settings-dialog{
+        width: -webkit-fill-available!important;
+    }
+    .footer__btns-container div:nth-child(3){
+        display: none;
+    }
+</style>
+
+</body>
+</html>
